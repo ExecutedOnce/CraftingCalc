@@ -7,7 +7,7 @@ TwoThirdCalc = 2/3
 t1OreModifierReduction = 9
 t1OreModifierProduction = 9
 
-##converts to usable modifier on each side of recipe.
+##converts skills to usable modifier on each side of recipe.
 OreReduction = (-(t1OreModifierReduction - 100) / 100) #0.91 modifier
 BarProduction = ((t1OreModifierProduction+100)/100) #1.09 modifier
 
