@@ -17,6 +17,9 @@ coal_ore = 0
 
 #steelplates 1:2 (Coal to Iron) 150 ore to 75 plates.
 steel_plates = 0
+#totals
+TotalCoalOreNeeded = 0
+TotalIronOreNeeded = 0
 
 def AlloyCalc():
     #150 bar to 75 steel.
@@ -24,12 +27,11 @@ def AlloyCalc():
     FinalSteelAlloyConversionRate = (SteelAlloy[0]*OreReduction)/(SteelAlloy[1]*BarProduction)
     CoalBar, IronBAr = (FinalSteelAlloyConversionRate*SteelAlloy[1])*ThirdCalc, (FinalSteelAlloyConversionRate*SteelAlloy[1])*TwoThirdCalc
     print(FinalSteelAlloyConversionRate*SteelAlloy[1], CoalBar, IronBAr)
-    
     #below is temporary, inefficient code for (hopefully) the sake of readability. ore to bar base ratio 65:45
     Ore_Conversion = ((65*OreReduction/45*BarProduction))
-    CoalBar2, IronBAr2 = (Ore_Conversion*CoalBar), (Ore_Conversion*IronBAr)
-    print("Coal1 and 2:",CoalBar, CoalBar2,"Iron1 and 2:", IronBAr, IronBAr2, "ConversionCheck=", Ore_Conversion)
-AlloyCalc()
+    CoalOre2, IronOre2 = (Ore_Conversion*CoalBar), (Ore_Conversion*IronBAr)
+    print("Coal1 and 2:",CoalBar, CoalOre2,"Iron1 and 2:", IronBAr, IronOre2, "ConversionCheck=", Ore_Conversion)
+    return (TotalIronOreNeeded + IronOre2), TotalCoalOreNeeded + CoalOre2
 
-
-AlloyCalc()
+TotalIronOreNeeded, TotalCoalOreNeeded = AlloyCalc()
+print(TotalCoalOreNeeded, TotalIronOreNeeded)
