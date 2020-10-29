@@ -90,11 +90,7 @@ T1AlloyReduction, T1AlloyProduction =  (-(T1AlloyModifierReduction - 100) / 100)
 
 T2AlloyReduction, T2AlloyProduction = (-(T2AlloyModifierReduction - 100) / 100), ((T2AlloyModifierProduction +100)/100)
 ## Ore conversion
-T1, T2 = ((65*T1OreReduction)/(45*T1BarProduction)), ((65*T2OreReduction)/(45*T2BarProduction))
-
-#multiple ores
-iron_ore = 0
-coal_ore = 0
+T1OreConversion, T2OreConversion = ((65*T1OreReduction)/(45*T1BarProduction)), ((65*T2OreReduction)/(45*T2BarProduction))
 
 #steelplates 1:2 (Coal to Iron) 150 ore to 75 plates.
 steel_plates = 0
@@ -106,10 +102,13 @@ def SteelAlloyCalc(x):
     #150 bar to 75 steel.
     SteelAlloy = [150, 75]
     ConvertedRate = ((SteelAlloy[0]*T1AlloyProduction)/(SteelAlloy[1]*T1AlloyProduction))
-    AlloyAlgo = x*ConvertedRate
+    Bars = (ConvertedRate*x)
+
+    OutputIronOre = (((T1OreConversion*Bars)*TwoThirdCalc)+TotalIronOreNeeded)
+    OutputCoalOre = (((T1OreConversion*Bars)*ThirdCalc)+TotalCoalOreNeeded)
+    return OutputIronOre, OutputCoalOre
 
 
-
-TotalIronOreNeeded, TotalCoalOreNeeded = AlloyCalc()
+TotalIronOreNeeded, TotalCoalOreNeeded = SteelAlloyCalc(75)
+TotalIronOreNeeded, TotalCoalOreNeeded = SteelAlloyCalc(75)
 print(TotalCoalOreNeeded, TotalIronOreNeeded)
-
