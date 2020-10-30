@@ -1,5 +1,4 @@
-
-#Declare Ores
+# Declare Ores
 coal = 0
 hematite = 0
 chromite = 0
@@ -12,28 +11,32 @@ natron = 0
 petalite = 0
 acanthite = 0
 
-#totals
+# totals
 
-#Quanta Values
+# Quanta Values
 coaln = 22.25
 hematiten = 23
-chromiten = 36
+chromiten = 38
 quartzn = 20
 bauxiten = 20
-malachiten = 32
-limestonen = 46
+malachiten = 55
+limestonen = 54
 pyriten = 90
-natronn = 21
+natronn = 39
 petaliten = 0
 acanthiten = 0
 
 
-#Products
+kergonx1n = 20
+kergonx2n = 30
+kergonx3n = 22
+kergonx4n = 40
+
+# Products
 honeycomb = 0
 steelplate = 0
 
-
-#TalentModifiers ########ORE#########
+# TalentModifiers ########ORE#########
 basic_ore_production = 9
 uncommon_ore_production = 1
 rare_ore_production = 1
@@ -42,16 +45,15 @@ basic_ore_refining = 9
 uncommon_ore_refining = 1
 rare_ore_refining = 1
 ###################### Alloy Modifiers ###############
-#basicproductivity + bars
+# basicproductivity + bars
 t1_alloy_productivity = 9
 t2_alloy_productivity = 1
 t3_alloy_productivity = 1
-#basicrefining - ore req
+# basicrefining - ore req
 t1_alloy_refining = 9
 t2_alloy_refining = 1
 t3_alloy_refining = 1
 #############parts
-
 
 
 ##############default 65ore : 45 pure bars
@@ -62,17 +64,16 @@ t3_alloy_refining = 1
 ###Steel Alloy Convert Total
 
 
-
 ##steel per run = 84.475
-#uncommon
-#rare
-#advanced
+# uncommon
+# rare
+# advanced
 QuarterCalc = 0.25
 HalfCalc = 0.5
-ThirdCalc = 1/3
-TwoThirdCalc = 2/3
+ThirdCalc = 1 / 3
+TwoThirdCalc = 2 / 3
 
-#modifiers -9% resources required, +9% resources per run.
+# modifiers -9% resources required, +9% resources per run.
 T1OreModifierReduction = 9
 T1BarModifierProduction = 9
 T2OreModifierReduction = 9
@@ -81,34 +82,99 @@ T1AlloyModifierReduction = 9
 T1AlloyModifierProduction = 9
 T2AlloyModifierReduction = 9
 T2AlloyModifierProduction = 9
-
+AllFuelModifierReduction = 6 #-2% input per lvl
+FuelModifierReduction = 9
+FuelModifierProduction = 15 #5% per llv
 ##converts to usable modifier on each side of recipe.
-T1OreReduction, T1BarProduction = (-(T1OreModifierReduction - 100) / 100), ((T1BarModifierProduction+100)/100)
-T2OreReduction, T2BarProduction = (-(T2OreModifierReduction - 100) / 100), ((T2BarModifierProduction+100)/100)
+TotalFuelReduction = AllFuelModifierReduction+FuelModifierReduction
+T1OreReduction, T1BarProduction = (-(T1OreModifierReduction - 100) / 100), ((T1BarModifierProduction + 100) / 100)
+T2OreReduction, T2BarProduction = (-(T2OreModifierReduction - 100) / 100), ((T2BarModifierProduction + 100) / 100)
 
-T1AlloyReduction, T1AlloyProduction =  (-(T1AlloyModifierReduction - 100) / 100), ((T1AlloyModifierProduction +100)/100)
+T1AlloyReduction, T1AlloyProduction = (-(T1AlloyModifierReduction - 100) / 100), (
+            (T1AlloyModifierProduction + 100) / 100)
 
-T2AlloyReduction, T2AlloyProduction = (-(T2AlloyModifierReduction - 100) / 100), ((T2AlloyModifierProduction +100)/100)
+T2AlloyReduction, T2AlloyProduction = (-(T2AlloyModifierReduction - 100) / 100), (
+            (T2AlloyModifierProduction + 100) / 100)
 ## Ore conversion
-T1OreConversion, T2OreConversion = ((65*T1OreReduction)/(45*T1BarProduction)), ((65*T2OreReduction)/(45*T2BarProduction))
+T1OreConversion, T2OreConversion = ((65 * T1OreReduction) / (45 * T1BarProduction)), (
+            (65 * T2OreReduction) / (45 * T2BarProduction))
 
-#steelplates 1:2 (Coal to Iron) 150 ore to 75 plates.
+# steelplates 1:2 (Coal to Iron) 150 ore to 75 plates.
 steel_plates = 0
-#totals
+# totals
 TotalCoalOreNeeded = 0
 TotalIronOreNeeded = 0
+TotalChromiteOreNeeded = 0
+TotalLimestoneOreNeeded = 0
+TotalSodiumOreNeeded = 0
+TotalCopperOreNeeded = 0
+
 
 def SteelAlloyCalc(x):
-    #150 bar to 75 steel.
+    # 150 bar to 75 steel.
     SteelAlloy = [150, 75]
-    ConvertedRate = ((SteelAlloy[0]*T1AlloyProduction)/(SteelAlloy[1]*T1AlloyProduction))
-    Bars = (ConvertedRate*x)
+    ConvertedRate = ((SteelAlloy[0] * T1AlloyProduction) / (SteelAlloy[1] * T1AlloyProduction))
+    Bars = (ConvertedRate * x)
 
-    OutputIronOre = (((T1OreConversion*Bars)*TwoThirdCalc)+TotalIronOreNeeded)
-    OutputCoalOre = (((T1OreConversion*Bars)*ThirdCalc)+TotalCoalOreNeeded)
+    OutputIronOre = (((T1OreConversion * Bars) * TwoThirdCalc) + TotalIronOreNeeded)
+    OutputCoalOre = (((T1OreConversion * Bars) * ThirdCalc) + TotalCoalOreNeeded)
     return OutputIronOre, OutputCoalOre
 
 
-TotalIronOreNeeded, TotalCoalOreNeeded = SteelAlloyCalc(75)
-TotalIronOreNeeded, TotalCoalOreNeeded = SteelAlloyCalc(75)
-print(TotalCoalOreNeeded, TotalIronOreNeeded)
+def KergonFuel(x, ore):
+    # 40 chromium bar to 100 kergon x3
+    KergonFuel = [40, 100]
+    ConvertedRate = ((KergonFuel[0] * (TotalFuelReduction) / (KergonFuel[1] * FuelModifierProduction)))
+    Ores = ((ConvertedRate * x)*(T2OreConversion))
+    return (ore + Ores)
+
+
+# TotalIronOreNeeded, TotalCoalOreNeeded = SteelAlloyCalc(75)
+# TotalIronOreNeeded, TotalCoalOreNeeded = SteelAlloyCalc(75)
+# print(TotalCoalOreNeeded, TotalIronOreNeeded)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+############profit tests
+TotalChromiteOreNeeded = KergonFuel(100, TotalChromiteOreNeeded)
+TotalLimestoneOreNeeded = KergonFuel(100, TotalLimestoneOreNeeded)
+TotalSodiumOreNeeded = KergonFuel(100, TotalSodiumOreNeeded)
+TotalCopperOreNeeded = KergonFuel(100, TotalCopperOreNeeded)
+print(TotalChromiteOreNeeded, -((TotalChromiteOreNeeded * chromiten)- (100 * kergonx3n)))
+print(TotalLimestoneOreNeeded, -((TotalLimestoneOreNeeded * limestonen)- (100 * kergonx2n)))
+print(TotalSodiumOreNeeded, -((TotalSodiumOreNeeded * natronn)- (100 * kergonx1n)))
+print(TotalCopperOreNeeded, -((TotalCopperOreNeeded * malachiten)- (100 * kergonx4n)))
