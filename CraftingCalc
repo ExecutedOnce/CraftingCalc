@@ -14,23 +14,23 @@ acanthite = 0
 # totals
 
 # Quanta Values
-coaln = 22.25
-hematiten = 23
-chromiten = 38
+coaln = 24
+hematiten = 27
+chromiten = 55
 quartzn = 20
 bauxiten = 20
-malachiten = 55
-limestonen = 54
+malachiten = 45
+limestonen = 56
 pyriten = 90
-natronn = 39
+natronn = 38
 petaliten = 0
 acanthiten = 0
 
 
-kergonx1n = 20
-kergonx2n = 30
-kergonx3n = 22
-kergonx4n = 40
+kergonx1n = 22.5
+kergonx2n = 70
+kergonx3n = 26
+kergonx4n = 29
 
 # Products
 honeycomb = 0
@@ -54,6 +54,8 @@ t1_alloy_refining = 9
 t2_alloy_refining = 1
 t3_alloy_refining = 1
 #############parts
+steelhoneycombproductivity = 15
+steelhoneycombrefining = 15
 
 
 ##############default 65ore : 45 pure bars
@@ -77,7 +79,7 @@ TwoThirdCalc = 2 / 3
 T1OreModifierReduction = 9
 T1BarModifierProduction = 9
 T2OreModifierReduction = 9
-T2BarModifierProduction = 9
+T2BarModifierProduction = 6
 T1AlloyModifierReduction = 9
 T1AlloyModifierProduction = 9
 T2AlloyModifierReduction = 9
@@ -99,16 +101,28 @@ T2AlloyReduction, T2AlloyProduction = (-(T2AlloyModifierReduction - 100) / 100),
 T1OreConversion, T2OreConversion = ((65 * T1OreReduction) / (45 * T1BarProduction)), (
             (65 * T2OreReduction) / (45 * T2BarProduction))
 
+##honeycomb
+steelhoneycombreduction, steelhoneycombproduction = (-(steelhoneycombrefining - 100) / 100), ((steelhoneycombproductivity + 100) / 100)
+
+
 # steelplates 1:2 (Coal to Iron) 150 ore to 75 plates.
 steel_plates = 0
 # totals
 TotalCoalOreNeeded = 0
 TotalIronOreNeeded = 0
+TotalQuartzOreNeeded = 0
+TotalBauxiteOreNeeded = 0
 TotalChromiteOreNeeded = 0
 TotalLimestoneOreNeeded = 0
 TotalSodiumOreNeeded = 0
 TotalCopperOreNeeded = 0
-
+def Honeycomb(x):
+    #100l steel to 10 honeycomb
+    SteelHoneyComb = [100, 10]
+    ConvertedRate = (SteelHoneyComb[0]*steelhoneycombreduction)/(SteelHoneyComb[1]*steelhoneycombproduction)
+    plates = (x*ConvertedRate)
+    OutputIronOre, OutputCoalOre = SteelAlloyCalc(plates)
+    return OutputIronOre, OutputCoalOre
 
 def SteelAlloyCalc(x):
     # 150 bar to 75 steel.
@@ -120,6 +134,25 @@ def SteelAlloyCalc(x):
     OutputCoalOre = (((T1OreConversion * Bars) * ThirdCalc) + TotalCoalOreNeeded)
     return OutputIronOre, OutputCoalOre
 
+def StainlessSteelAlloyCalc(x):
+    # 150 bar to 75 steel.
+    StainlessSteelAlloy = [200, 75]
+    ConvertedRate = ((StainlessSteelAlloy[0] * T2AlloyProduction) / (StainlessSteelAlloy[1] * T2AlloyProduction))
+    Bars = (ConvertedRate * x)
+
+    OutputIronOre = (((T1OreConversion * Bars) * QuarterCalc) + TotalIronOreNeeded)
+    OutputCoalOre = (((T1OreConversion * Bars) * QuarterCalc) + TotalCoalOreNeeded)
+    OutputChromiteOre = (((T2OreConversion * Bars) * HalfCalc) + TotalChromiteOreNeeded)
+    return OutputIronOre, OutputCoalOre, OutputChromiteOre
+def Silumin(x):
+    Silumin = [150, 75]
+    ConvertedRate = ((Silumin[0] * T1AlloyProduction) / (Silumin[1] * T1AlloyProduction))
+    Bars = (ConvertedRate * x)
+
+    OutputBauxiteOre = (((T1OreConversion * Bars) * TwoThirdCalc) + TotalIronOreNeeded)
+    OutputQuartzOre = (((T1OreConversion * Bars) * ThirdCalc) + TotalCoalOreNeeded)
+    return OutputBauxiteOre, OutputQuartzOre
+
 
 def KergonFuel(x, ore):
     # 40 chromium bar to 100 kergon x3
@@ -128,41 +161,20 @@ def KergonFuel(x, ore):
     Ores = ((ConvertedRate * x)*(T2OreConversion))
     return (ore + Ores)
 
-
+#OutputIronOre, OutputCoalOre = Honeycomb(1)
+#print(OutputIronOre*hematiten + OutputCoalOre*coaln)
 # TotalIronOreNeeded, TotalCoalOreNeeded = SteelAlloyCalc(75)
 # TotalIronOreNeeded, TotalCoalOreNeeded = SteelAlloyCalc(75)
 # print(TotalCoalOreNeeded, TotalIronOreNeeded)
 
 
+OutputIronOre, OutputCoalOre, OutputChromiteOre = StainlessSteelAlloyCalc(75)
+print(OutputIronOre, OutputCoalOre, OutputChromiteOre)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#OutputIronOre, OutputCoalOre = SteelAlloyCalc(100)
+#print((OutputIronOre*coaln)+(OutputCoalOre*hematiten))
 
 
 
@@ -172,9 +184,9 @@ def KergonFuel(x, ore):
 ############profit tests
 TotalChromiteOreNeeded = KergonFuel(100, TotalChromiteOreNeeded)
 TotalLimestoneOreNeeded = KergonFuel(100, TotalLimestoneOreNeeded)
-TotalSodiumOreNeeded = KergonFuel(100, TotalSodiumOreNeeded)
+TotalSodiumOreNeeded = KergonFuel(171564, TotalSodiumOreNeeded)
 TotalCopperOreNeeded = KergonFuel(100, TotalCopperOreNeeded)
-print(TotalChromiteOreNeeded, -((TotalChromiteOreNeeded * chromiten)- (100 * kergonx3n)))
-print(TotalLimestoneOreNeeded, -((TotalLimestoneOreNeeded * limestonen)- (100 * kergonx2n)))
-print(TotalSodiumOreNeeded, -((TotalSodiumOreNeeded * natronn)- (100 * kergonx1n)))
-print(TotalCopperOreNeeded, -((TotalCopperOreNeeded * malachiten)- (100 * kergonx4n)))
+print("Chromite,x3",TotalChromiteOreNeeded, -((TotalChromiteOreNeeded * chromiten)- (100 * kergonx3n)))
+print("Limestone,x2",TotalLimestoneOreNeeded, -((TotalLimestoneOreNeeded * limestonen)- (100 * kergonx2n)))
+print("Sodium,x1",TotalSodiumOreNeeded, -((TotalSodiumOreNeeded * natronn)- (171564 * kergonx1n)))
+print("Copper,x4",TotalCopperOreNeeded, -((TotalCopperOreNeeded * malachiten)- (100 * kergonx4n)))
